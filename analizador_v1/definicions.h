@@ -1,0 +1,10 @@
+#ifndef DEFINICIONS_H_
+#define FUNCION_COD 300
+#define VARIABLE_COD 301
+#define CONSTANTE_COD 302
+#define TABOA_COD 303
+#define AXUDA_COD 304
+#define SAIR_COD 305
+#define CREACION_COD 306
+
+#endif /* DEFINICIONS_H_ */
