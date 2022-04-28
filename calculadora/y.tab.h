@@ -67,15 +67,17 @@ extern int yydebug;
     OP_MENOR_IGUAL_COD = 268,      /* OP_MENOR_IGUAL_COD  */
     OP_DISTINTO_COD = 269,         /* OP_DISTINTO_COD  */
     OP_IGUAL_IGUAL_COD = 270,      /* OP_IGUAL_IGUAL_COD  */
-    ARQUIVO = 271,                 /* ARQUIVO  */
+    TABOA = 271,                   /* TABOA  */
     AXUDA = 272,                   /* AXUDA  */
-    TABOA = 273,                   /* TABOA  */
-    SAIR = 274,                    /* SAIR  */
-    WORKSPACE = 275,               /* WORKSPACE  */
-    ELIMINAR = 276,                /* ELIMINAR  */
-    ABRIR = 277,                   /* ABRIR  */
-    FIN_FICHEIRO = 278,            /* FIN_FICHEIRO  */
-    NEGACION = 279                 /* NEGACION  */
+    WORKSPACE = 273,               /* WORKSPACE  */
+    ELIMINAR = 274,                /* ELIMINAR  */
+    IMPORT = 275,                  /* IMPORT  */
+    LOAD = 276,                    /* LOAD  */
+    SAIR = 277,                    /* SAIR  */
+    ARQUIVO = 278,                 /* ARQUIVO  */
+    LIBRERIA = 279,                /* LIBRERIA  */
+    FIN_FICHEIRO = 280,            /* FIN_FICHEIRO  */
+    NEGACION = 281                 /* NEGACION  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -97,26 +99,28 @@ extern int yydebug;
 #define OP_MENOR_IGUAL_COD 268
 #define OP_DISTINTO_COD 269
 #define OP_IGUAL_IGUAL_COD 270
-#define ARQUIVO 271
+#define TABOA 271
 #define AXUDA 272
-#define TABOA 273
-#define SAIR 274
-#define WORKSPACE 275
-#define ELIMINAR 276
-#define ABRIR 277
-#define FIN_FICHEIRO 278
-#define NEGACION 279
+#define WORKSPACE 273
+#define ELIMINAR 274
+#define IMPORT 275
+#define LOAD 276
+#define SAIR 277
+#define ARQUIVO 278
+#define LIBRERIA 279
+#define FIN_FICHEIRO 280
+#define NEGACION 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "analizadorSintactico.y"
+#line 17 "analizadorSintactico.y"
 
 double valor;   /*Para devolver números*/
 char *cadea;    /*Para devolver cadeas*/
 
-#line 120 "y.tab.h"
+#line 124 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

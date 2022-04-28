@@ -1,6 +1,5 @@
 #ifndef INTERPRETEBISON_CONSTANTES_H
 
-
 struct constante{
     char *nome;
     double valor;

@@ -71,17 +71,18 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <dlfcn.h>
 #include <string.h>
 #include "definicions.h"
 #include "taboaSimbolos.h"
 #include "xestionErros.h"
+#include "recursos.h"
 #include "lex.yy.h"
-extern int yylex();
 void yyerror(char* s);
 void cambiarGlobal();
 int global = 0;
 
-#line 85 "y.tab.c"
+#line 86 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -138,15 +139,17 @@ extern int yydebug;
     OP_MENOR_IGUAL_COD = 268,      /* OP_MENOR_IGUAL_COD  */
     OP_DISTINTO_COD = 269,         /* OP_DISTINTO_COD  */
     OP_IGUAL_IGUAL_COD = 270,      /* OP_IGUAL_IGUAL_COD  */
-    ARQUIVO = 271,                 /* ARQUIVO  */
+    TABOA = 271,                   /* TABOA  */
     AXUDA = 272,                   /* AXUDA  */
-    TABOA = 273,                   /* TABOA  */
-    SAIR = 274,                    /* SAIR  */
-    WORKSPACE = 275,               /* WORKSPACE  */
-    ELIMINAR = 276,                /* ELIMINAR  */
-    ABRIR = 277,                   /* ABRIR  */
-    FIN_FICHEIRO = 278,            /* FIN_FICHEIRO  */
-    NEGACION = 279                 /* NEGACION  */
+    WORKSPACE = 273,               /* WORKSPACE  */
+    ELIMINAR = 274,                /* ELIMINAR  */
+    IMPORT = 275,                  /* IMPORT  */
+    LOAD = 276,                    /* LOAD  */
+    SAIR = 277,                    /* SAIR  */
+    ARQUIVO = 278,                 /* ARQUIVO  */
+    LIBRERIA = 279,                /* LIBRERIA  */
+    FIN_FICHEIRO = 280,            /* FIN_FICHEIRO  */
+    NEGACION = 281                 /* NEGACION  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -168,26 +171,28 @@ extern int yydebug;
 #define OP_MENOR_IGUAL_COD 268
 #define OP_DISTINTO_COD 269
 #define OP_IGUAL_IGUAL_COD 270
-#define ARQUIVO 271
+#define TABOA 271
 #define AXUDA 272
-#define TABOA 273
-#define SAIR 274
-#define WORKSPACE 275
-#define ELIMINAR 276
-#define ABRIR 277
-#define FIN_FICHEIRO 278
-#define NEGACION 279
+#define WORKSPACE 273
+#define ELIMINAR 274
+#define IMPORT 275
+#define LOAD 276
+#define SAIR 277
+#define ARQUIVO 278
+#define LIBRERIA 279
+#define FIN_FICHEIRO 280
+#define NEGACION 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "analizadorSintactico.y"
+#line 17 "analizadorSintactico.y"
 
 double valor;   /*Para devolver números*/
 char *cadea;    /*Para devolver cadeas*/
 
-#line 191 "y.tab.c"
+#line 196 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -221,35 +226,38 @@ enum yysymbol_kind_t
   YYSYMBOL_OP_MENOR_IGUAL_COD = 13,        /* OP_MENOR_IGUAL_COD  */
   YYSYMBOL_OP_DISTINTO_COD = 14,           /* OP_DISTINTO_COD  */
   YYSYMBOL_OP_IGUAL_IGUAL_COD = 15,        /* OP_IGUAL_IGUAL_COD  */
-  YYSYMBOL_ARQUIVO = 16,                   /* ARQUIVO  */
+  YYSYMBOL_TABOA = 16,                     /* TABOA  */
   YYSYMBOL_AXUDA = 17,                     /* AXUDA  */
-  YYSYMBOL_TABOA = 18,                     /* TABOA  */
-  YYSYMBOL_SAIR = 19,                      /* SAIR  */
-  YYSYMBOL_WORKSPACE = 20,                 /* WORKSPACE  */
-  YYSYMBOL_ELIMINAR = 21,                  /* ELIMINAR  */
-  YYSYMBOL_ABRIR = 22,                     /* ABRIR  */
-  YYSYMBOL_FIN_FICHEIRO = 23,              /* FIN_FICHEIRO  */
-  YYSYMBOL_24_ = 24,                       /* '-'  */
-  YYSYMBOL_25_ = 25,                       /* '+'  */
-  YYSYMBOL_26_ = 26,                       /* '*'  */
-  YYSYMBOL_27_ = 27,                       /* '/'  */
-  YYSYMBOL_28_ = 28,                       /* '>'  */
-  YYSYMBOL_29_ = 29,                       /* '<'  */
-  YYSYMBOL_NEGACION = 30,                  /* NEGACION  */
-  YYSYMBOL_31_ = 31,                       /* '^'  */
-  YYSYMBOL_32_n_ = 32,                     /* '\n'  */
-  YYSYMBOL_33_ = 33,                       /* ';'  */
-  YYSYMBOL_34_ = 34,                       /* '('  */
-  YYSYMBOL_35_ = 35,                       /* ')'  */
-  YYSYMBOL_36_ = 36,                       /* ','  */
-  YYSYMBOL_YYACCEPT = 37,                  /* $accept  */
-  YYSYMBOL_input = 38,                     /* input  */
-  YYSYMBOL_line = 39,                      /* line  */
-  YYSYMBOL_exp = 40,                       /* exp  */
-  YYSYMBOL_declaracion = 41,               /* declaracion  */
-  YYSYMBOL_comparacion = 42,               /* comparacion  */
-  YYSYMBOL_calculo = 43,                   /* calculo  */
-  YYSYMBOL_metodo = 44                     /* metodo  */
+  YYSYMBOL_WORKSPACE = 18,                 /* WORKSPACE  */
+  YYSYMBOL_ELIMINAR = 19,                  /* ELIMINAR  */
+  YYSYMBOL_IMPORT = 20,                    /* IMPORT  */
+  YYSYMBOL_LOAD = 21,                      /* LOAD  */
+  YYSYMBOL_SAIR = 22,                      /* SAIR  */
+  YYSYMBOL_ARQUIVO = 23,                   /* ARQUIVO  */
+  YYSYMBOL_LIBRERIA = 24,                  /* LIBRERIA  */
+  YYSYMBOL_FIN_FICHEIRO = 25,              /* FIN_FICHEIRO  */
+  YYSYMBOL_26_ = 26,                       /* '-'  */
+  YYSYMBOL_27_ = 27,                       /* '+'  */
+  YYSYMBOL_28_ = 28,                       /* '*'  */
+  YYSYMBOL_29_ = 29,                       /* '/'  */
+  YYSYMBOL_30_ = 30,                       /* '%'  */
+  YYSYMBOL_31_ = 31,                       /* '>'  */
+  YYSYMBOL_32_ = 32,                       /* '<'  */
+  YYSYMBOL_NEGACION = 33,                  /* NEGACION  */
+  YYSYMBOL_34_ = 34,                       /* '^'  */
+  YYSYMBOL_35_n_ = 35,                     /* '\n'  */
+  YYSYMBOL_36_ = 36,                       /* ';'  */
+  YYSYMBOL_37_ = 37,                       /* '('  */
+  YYSYMBOL_38_ = 38,                       /* ')'  */
+  YYSYMBOL_39_ = 39,                       /* ','  */
+  YYSYMBOL_YYACCEPT = 40,                  /* $accept  */
+  YYSYMBOL_input = 41,                     /* input  */
+  YYSYMBOL_line = 42,                      /* line  */
+  YYSYMBOL_exp = 43,                       /* exp  */
+  YYSYMBOL_declaracion = 44,               /* declaracion  */
+  YYSYMBOL_comparacion = 45,               /* comparacion  */
+  YYSYMBOL_calculo = 46,                   /* calculo  */
+  YYSYMBOL_externas = 47                   /* externas  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -571,19 +579,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   172
+#define YYLAST   229
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  37
+#define YYNTOKENS  40
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  8
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  38
+#define YYNRULES  44
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  63
+#define YYNSTATES  75
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   279
+#define YYMAXUTOK   281
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -598,15 +606,15 @@ union yyalloc
 static const yytype_int8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      32,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      35,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,    30,     2,     2,
+      37,    38,    28,    27,    39,    26,     2,    29,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    36,
+      32,     2,    31,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      34,    35,    26,    25,    36,    24,     2,    27,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    33,
-      29,     2,    28,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    31,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    34,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -624,17 +632,19 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    30
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    33
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    68,    68,    69,    73,    77,    88,    89,    92,    93,
-      94,    95,    96,   115,   116,   117,   118,   119,   120,   125,
-     138,   157,   175,   193,   211,   229,   252,   262,   271,   280,
-     289,   299,   310,   318,   326,   334,   346,   357,   371
+       0,    70,    70,    71,    75,    79,    90,    91,    92,    95,
+      96,    97,    98,    99,   100,   108,   127,   128,   129,   130,
+     131,   132,   138,   149,   159,   178,   197,   218,   238,   258,
+     283,   295,   307,   319,   331,   343,   358,   366,   374,   382,
+     391,   400,   408,   419,   444
 };
 #endif
 
@@ -654,11 +664,12 @@ static const char *const yytname[] =
   "IDENTIFICADOR", "OP_ASIGNACION_COD", "OP_MAS_MAS_COD",
   "OP_MENOS_MENOS_COD", "OP_SUMA_IGUAL_COD", "OP_RESTA_IGUAL_COD",
   "OP_MULT_IGUAL_COD", "OP_DIV_IGUAL_COD", "OP_MAIOR_IGUAL_COD",
-  "OP_MENOR_IGUAL_COD", "OP_DISTINTO_COD", "OP_IGUAL_IGUAL_COD", "ARQUIVO",
-  "AXUDA", "TABOA", "SAIR", "WORKSPACE", "ELIMINAR", "ABRIR",
-  "FIN_FICHEIRO", "'-'", "'+'", "'*'", "'/'", "'>'", "'<'", "NEGACION",
-  "'^'", "'\\n'", "';'", "'('", "')'", "','", "$accept", "input", "line",
-  "exp", "declaracion", "comparacion", "calculo", "metodo", YY_NULLPTR
+  "OP_MENOR_IGUAL_COD", "OP_DISTINTO_COD", "OP_IGUAL_IGUAL_COD", "TABOA",
+  "AXUDA", "WORKSPACE", "ELIMINAR", "IMPORT", "LOAD", "SAIR", "ARQUIVO",
+  "LIBRERIA", "FIN_FICHEIRO", "'-'", "'+'", "'*'", "'/'", "'%'", "'>'",
+  "'<'", "NEGACION", "'^'", "'\\n'", "';'", "'('", "')'", "','", "$accept",
+  "input", "line", "exp", "declaracion", "comparacion", "calculo",
+  "externas", YY_NULLPTR
 };
 
 static const char *
@@ -675,12 +686,12 @@ static const yytype_int16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278,    45,    43,    42,    47,    62,    60,
-     279,    94,    10,    59,    40,    41,    44
+     275,   276,   277,   278,   279,   280,    45,    43,    42,    47,
+      37,    62,    60,   281,    94,    10,    59,    40,    41,    44
 };
 #endif
 
-#define YYPACT_NINF (-16)
+#define YYPACT_NINF (-31)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -694,13 +705,14 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-     -16,    31,   -16,   -16,    68,   -16,   -16,   -16,   -15,   -16,
-      38,   -16,    38,   -16,   117,   -16,   -16,   -16,   -16,    38,
-     -16,   -16,    38,    38,    38,    38,    38,   -16,   -16,    81,
-      38,    38,    38,    38,    38,    38,    38,    38,    38,    38,
-     -16,   -16,   139,   143,   143,    75,    75,    56,   -16,   -16,
-     -16,   -16,   -16,   143,   143,    75,    75,   -16,   -16,   -16,
-      38,    99,   -16
+     -31,    42,   -31,   -31,   -31,   120,   -31,   -31,   -31,   -31,
+     -23,   -20,   -31,   -25,   -31,    66,   -31,    66,   -31,   163,
+     -31,   -31,   -31,   -31,    66,   -31,   -31,    66,    66,    66,
+      66,   -31,   -31,     1,   -28,   109,    66,    66,    66,    66,
+      66,    66,    66,    66,    66,    66,    66,    66,   -31,   -31,
+      21,   172,   172,   195,   195,   -30,   -31,   -28,   -28,   -28,
+     -28,   172,   172,   195,   195,   195,   -28,   -28,   -28,    66,
+      81,   -31,    66,   136,   -31
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -708,25 +720,26 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       2,     0,     1,     8,    12,     9,    10,    11,     0,     7,
-       0,     4,     0,     3,     0,    15,    14,    17,    16,     0,
-      20,    21,     0,     0,     0,     0,     0,    18,    36,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       5,     6,    19,    22,    23,    24,    25,     0,    13,    31,
-      30,    29,    28,    33,    32,    34,    35,    26,    27,    37,
-       0,     0,    38
+       2,     0,     1,     8,     9,    15,    11,    10,    12,    13,
+       0,     0,    14,     0,     7,     0,     4,     0,     3,     0,
+      18,    17,    19,    20,     0,    24,    25,     0,     0,     0,
+       0,    21,    22,     0,    42,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     5,     6,
+      23,    26,    27,    28,    29,     0,    16,    35,    34,    33,
+      32,    37,    36,    38,    39,    40,    30,    31,    41,     0,
+       0,    43,     0,     0,    44
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -16,   -16,   -16,   -10,   -16,   -16,   -16,   -16
+     -31,   -31,   -31,   -15,   -31,   -31,   -31,   -31
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     1,    13,    14,    15,    16,    17,    18
+       0,     1,    18,    19,    20,    21,    22,    23
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -734,77 +747,90 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      28,    27,    29,     0,     0,     0,     0,     0,     0,    42,
-       0,     0,    43,    44,    45,    46,    47,     0,     0,     0,
-      49,    50,    51,    52,    53,    54,    55,    56,    57,    58,
-       0,     2,     0,     0,     3,     4,     0,     0,     0,     0,
-       0,     3,     4,     0,     0,     0,     0,     0,     0,     5,
-      61,     6,     7,     8,     9,    10,     5,     0,     6,     7,
-       8,     0,    10,    11,     0,    12,     0,     0,    30,    31,
-      32,    33,    12,    19,    20,    21,    22,    23,    24,    25,
-      34,    35,    36,    37,    38,    39,     0,    30,    31,    32,
-      33,    59,    60,    30,    31,    32,    33,     0,     0,     0,
-       0,     0,    26,    38,    39,    34,    35,    36,    37,    38,
-      39,    30,    31,    32,    33,     0,    48,     0,     0,     0,
-       0,     0,     0,    34,    35,    36,    37,    38,    39,    30,
-      31,    32,    33,     0,    62,     0,     0,     0,     0,     0,
-       0,    34,    35,    36,    37,    38,    39,     0,     0,    40,
-      41,    30,    31,    32,    33,    30,    31,    32,    33,     0,
-       0,     0,     0,    34,    35,    36,    37,    38,    39,    36,
-      37,    38,    39
+      34,    31,    35,    32,    33,    55,    47,    69,     0,    50,
+       0,     0,    51,    52,    53,    54,     0,     0,     0,     0,
+       0,    57,    58,    59,    60,    61,    62,    63,    64,    65,
+      66,    67,    68,    36,    37,    38,    39,     0,     0,     0,
+       0,     0,     2,     3,     0,     4,     5,    40,    41,    42,
+      43,    44,    45,    46,    70,    47,     0,    73,     6,     7,
+       8,     9,    10,    11,    12,     0,    13,    14,    15,     4,
+       5,     0,     0,     0,     0,     0,     0,    16,     0,    17,
+       0,     0,     6,     7,     8,     9,    10,    11,    12,     0,
+      13,     0,    15,    36,    37,    38,    39,     0,     0,     0,
+       0,     0,     0,    17,     0,     0,     0,    40,    41,    42,
+      43,    44,    45,    46,     0,    47,     0,     0,     0,    71,
+      72,    36,    37,    38,    39,    24,    25,    26,    27,    28,
+      29,    30,     0,     0,     0,    40,    41,    42,    43,    44,
+      45,    46,     0,    47,     0,     0,     0,    56,    36,    37,
+      38,    39,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    40,    41,    42,    43,    44,    45,    46,     0,
+      47,     0,     0,     0,    74,    36,    37,    38,    39,     0,
+       0,     0,     0,     0,    36,    37,    38,    39,     0,    40,
+      41,    42,    43,    44,    45,    46,     0,    47,    48,    49,
+      42,    43,    44,    45,    46,     0,    47,    36,    37,    38,
+      39,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    45,    46,     0,    47
 };
 
 static const yytype_int8 yycheck[] =
 {
-      10,    16,    12,    -1,    -1,    -1,    -1,    -1,    -1,    19,
-      -1,    -1,    22,    23,    24,    25,    26,    -1,    -1,    -1,
-      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
-      -1,     0,    -1,    -1,     3,     4,    -1,    -1,    -1,    -1,
-      -1,     3,     4,    -1,    -1,    -1,    -1,    -1,    -1,    18,
-      60,    20,    21,    22,    23,    24,    18,    -1,    20,    21,
-      22,    -1,    24,    32,    -1,    34,    -1,    -1,    12,    13,
-      14,    15,    34,     5,     6,     7,     8,     9,    10,    11,
-      24,    25,    26,    27,    28,    29,    -1,    12,    13,    14,
-      15,    35,    36,    12,    13,    14,    15,    -1,    -1,    -1,
-      -1,    -1,    34,    28,    29,    24,    25,    26,    27,    28,
-      29,    12,    13,    14,    15,    -1,    35,    -1,    -1,    -1,
-      -1,    -1,    -1,    24,    25,    26,    27,    28,    29,    12,
-      13,    14,    15,    -1,    35,    -1,    -1,    -1,    -1,    -1,
-      -1,    24,    25,    26,    27,    28,    29,    -1,    -1,    32,
-      33,    12,    13,    14,    15,    12,    13,    14,    15,    -1,
-      -1,    -1,    -1,    24,    25,    26,    27,    28,    29,    26,
-      27,    28,    29
+      15,    24,    17,    23,    29,     4,    34,    37,    -1,    24,
+      -1,    -1,    27,    28,    29,    30,    -1,    -1,    -1,    -1,
+      -1,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    12,    13,    14,    15,    -1,    -1,    -1,
+      -1,    -1,     0,     1,    -1,     3,     4,    26,    27,    28,
+      29,    30,    31,    32,    69,    34,    -1,    72,    16,    17,
+      18,    19,    20,    21,    22,    -1,    24,    25,    26,     3,
+       4,    -1,    -1,    -1,    -1,    -1,    -1,    35,    -1,    37,
+      -1,    -1,    16,    17,    18,    19,    20,    21,    22,    -1,
+      24,    -1,    26,    12,    13,    14,    15,    -1,    -1,    -1,
+      -1,    -1,    -1,    37,    -1,    -1,    -1,    26,    27,    28,
+      29,    30,    31,    32,    -1,    34,    -1,    -1,    -1,    38,
+      39,    12,    13,    14,    15,     5,     6,     7,     8,     9,
+      10,    11,    -1,    -1,    -1,    26,    27,    28,    29,    30,
+      31,    32,    -1,    34,    -1,    -1,    -1,    38,    12,    13,
+      14,    15,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    26,    27,    28,    29,    30,    31,    32,    -1,
+      34,    -1,    -1,    -1,    38,    12,    13,    14,    15,    -1,
+      -1,    -1,    -1,    -1,    12,    13,    14,    15,    -1,    26,
+      27,    28,    29,    30,    31,    32,    -1,    34,    35,    36,
+      28,    29,    30,    31,    32,    -1,    34,    12,    13,    14,
+      15,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    31,    32,    -1,    34
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    38,     0,     3,     4,    18,    20,    21,    22,    23,
-      24,    32,    34,    39,    40,    41,    42,    43,    44,     5,
-       6,     7,     8,     9,    10,    11,    34,    16,    40,    40,
-      12,    13,    14,    15,    24,    25,    26,    27,    28,    29,
-      32,    33,    40,    40,    40,    40,    40,    40,    35,    40,
-      40,    40,    40,    40,    40,    40,    40,    40,    40,    35,
-      36,    40,    35
+       0,    41,     0,     1,     3,     4,    16,    17,    18,    19,
+      20,    21,    22,    24,    25,    26,    35,    37,    42,    43,
+      44,    45,    46,    47,     5,     6,     7,     8,     9,    10,
+      11,    24,    23,    29,    43,    43,    12,    13,    14,    15,
+      26,    27,    28,    29,    30,    31,    32,    34,    35,    36,
+      43,    43,    43,    43,    43,     4,    38,    43,    43,    43,
+      43,    43,    43,    43,    43,    43,    43,    43,    43,    37,
+      43,    38,    39,    43,    38
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    37,    38,    38,    39,    39,    39,    39,    40,    40,
-      40,    40,    40,    40,    40,    40,    40,    40,    40,    41,
-      41,    41,    41,    41,    41,    41,    42,    42,    42,    42,
-      42,    42,    43,    43,    43,    43,    43,    44,    44
+       0,    40,    41,    41,    42,    42,    42,    42,    42,    43,
+      43,    43,    43,    43,    43,    43,    43,    43,    43,    43,
+      43,    43,    43,    44,    44,    44,    44,    44,    44,    44,
+      45,    45,    45,    45,    45,    45,    46,    46,    46,    46,
+      46,    46,    46,    47,    47
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     0,     2,     1,     2,     2,     1,     1,     1,
-       1,     1,     1,     3,     1,     1,     1,     1,     2,     3,
-       2,     2,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     2,     4,     6
+       1,     1,     1,     1,     1,     1,     3,     1,     1,     1,
+       1,     2,     2,     3,     2,     2,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     2,     6,     8
 };
 
 
@@ -1272,22 +1298,22 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* input: %empty  */
-#line 68 "analizadorSintactico.y"
-       {printf(">> ");}
-#line 1278 "y.tab.c"
+#line 70 "analizadorSintactico.y"
+               {printf(">> ");}
+#line 1304 "y.tab.c"
     break;
 
   case 4: /* line: '\n'  */
-#line 73 "analizadorSintactico.y"
+#line 75 "analizadorSintactico.y"
            {
             if(!global)
                 printf(">> ");
         }
-#line 1287 "y.tab.c"
+#line 1313 "y.tab.c"
     break;
 
   case 5: /* line: exp '\n'  */
-#line 77 "analizadorSintactico.y"
+#line 79 "analizadorSintactico.y"
                    {
             if(!global){
                 if(!isnan((yyvsp[-1].valor))){
@@ -1299,438 +1325,543 @@ yyreduce:
                         printf("%.10g\n",(yyvsp[-1].valor));
             }
         }
-#line 1303 "y.tab.c"
-    break;
-
-  case 6: /* line: exp ';'  */
-#line 88 "analizadorSintactico.y"
-                  {printf("%.10g\n", (yyvsp[-1].valor));}
-#line 1309 "y.tab.c"
+#line 1329 "y.tab.c"
     break;
 
   case 7: /* line: FIN_FICHEIRO  */
-#line 89 "analizadorSintactico.y"
+#line 91 "analizadorSintactico.y"
                        {printf(">> ");}
-#line 1315 "y.tab.c"
+#line 1335 "y.tab.c"
     break;
 
-  case 8: /* exp: NUMERO  */
+  case 8: /* line: error  */
 #line 92 "analizadorSintactico.y"
-               {(yyval.valor) = (yyvsp[0].valor);}
-#line 1321 "y.tab.c"
+                {yyclearin;}
+#line 1341 "y.tab.c"
     break;
 
-  case 9: /* exp: TABOA  */
-#line 93 "analizadorSintactico.y"
-             {imprimirTaboa(); (yyval.valor) = NAN;}
-#line 1327 "y.tab.c"
-    break;
-
-  case 10: /* exp: WORKSPACE  */
-#line 94 "analizadorSintactico.y"
-                 {imprimirWorkspace(); (yyval.valor) = NAN;}
-#line 1333 "y.tab.c"
-    break;
-
-  case 11: /* exp: ELIMINAR  */
+  case 9: /* exp: NUMERO  */
 #line 95 "analizadorSintactico.y"
-                {eliminarWorkspace(); (yyval.valor) = NAN;}
-#line 1339 "y.tab.c"
+               {(yyval.valor) = (yyvsp[0].valor);}
+#line 1347 "y.tab.c"
     break;
 
-  case 12: /* exp: IDENTIFICADOR  */
+  case 10: /* exp: AXUDA  */
 #line 96 "analizadorSintactico.y"
-                    {
-        if(buscarNumero((yyvsp[0].cadea), VARIABLE_COD) || buscarNumero((yyvsp[0].cadea), CONSTANTE_COD)){
-            if (is_inicializada((yyvsp[0].cadea)) == 1) (yyval.valor) = recuperarValor((yyvsp[0].cadea));
-            else (yyval.valor) = NAN;
+               {executar((yyvsp[0].cadea)); (yyval.valor) = NAN;}
+#line 1353 "y.tab.c"
+    break;
 
-        } else {
-            if(buscarNumero((yyvsp[0].cadea), FUNCION_COD)){
-                  (yyval.valor) = NAN;
-                  yyerror("[ERROR] Trátase dunha función");
-            } else {
-                crearVariable((yyvsp[0].cadea));
-                (yyval.valor) = NAN;
-               yyerror("[WARNING] A variable é creada sen inicializar");
-            }
-        }
+  case 11: /* exp: TABOA  */
+#line 97 "analizadorSintactico.y"
+                {executar((yyvsp[0].cadea)); (yyval.valor) = NAN;}
+#line 1359 "y.tab.c"
+    break;
+
+  case 12: /* exp: WORKSPACE  */
+#line 98 "analizadorSintactico.y"
+                {executar((yyvsp[0].cadea)); (yyval.valor) = NAN;}
+#line 1365 "y.tab.c"
+    break;
+
+  case 13: /* exp: ELIMINAR  */
+#line 99 "analizadorSintactico.y"
+                {executar((yyvsp[0].cadea)); (yyval.valor) = NAN;}
+#line 1371 "y.tab.c"
+    break;
+
+  case 14: /* exp: SAIR  */
+#line 100 "analizadorSintactico.y"
+                {(yyval.valor) = NAN;
+                     if(!global){
+                         return executar((yyvsp[0].cadea));
+                    }else {
+                        yyerror("[ERROR] No pode sair dende un ficheiro");
+                        free((yyvsp[0].cadea));
+                    }
+                }
+#line 1384 "y.tab.c"
+    break;
+
+  case 15: /* exp: IDENTIFICADOR  */
+#line 108 "analizadorSintactico.y"
+                    {
+       if(buscarNumero((yyvsp[0].cadea), VARIABLE_COD) || buscarNumero((yyvsp[0].cadea), CONSTANTE_COD)){
+                   if (is_inicializada((yyvsp[0].cadea)) == 1) (yyval.valor) = recuperarValor((yyvsp[0].cadea));
+                   else (yyval.valor) = NAN;
+
+               } else {
+                   if(buscarNumero((yyvsp[0].cadea), FUNCION_COD)){
+                         (yyval.valor) = NAN;
+                         yyerror("[ERROR] Trátase dunha función");
+                   } else {
+                       insertarVariable((yyvsp[0].cadea), NAN);
+                       (yyval.valor) = NAN;
+                      yyerror("[WARNING] A variable é creada sen inicializar");
+                   }
+               }
 
 
         free((yyvsp[0].cadea));
     }
-#line 1363 "y.tab.c"
+#line 1408 "y.tab.c"
     break;
 
-  case 13: /* exp: '(' exp ')'  */
-#line 115 "analizadorSintactico.y"
+  case 16: /* exp: '(' exp ')'  */
+#line 127 "analizadorSintactico.y"
                   {(yyval.valor) = (yyvsp[-1].valor);}
-#line 1369 "y.tab.c"
+#line 1414 "y.tab.c"
     break;
 
-  case 18: /* exp: ABRIR ARQUIVO  */
-#line 120 "analizadorSintactico.y"
-                    {
-                            apertura_arquivo((yyvsp[0].cadea)); free((yyvsp[0].cadea)); cambiarGlobal(); (yyval.valor) = NAN;
-                    }
-#line 1377 "y.tab.c"
+  case 21: /* exp: IMPORT LIBRERIA  */
+#line 132 "analizadorSintactico.y"
+                        {
+                            if(!funcionCarga((yyvsp[-1].cadea),(yyvsp[0].cadea))){
+                                yyerror("[ERROR] A librería xa está importada...");
+                            }
+                            (yyval.valor) = NAN;
+                        }
+#line 1425 "y.tab.c"
     break;
 
-  case 19: /* declaracion: IDENTIFICADOR OP_ASIGNACION_COD exp  */
-#line 125 "analizadorSintactico.y"
-                                                 {
-                if(buscarNumero((yyvsp[-2].cadea), CONSTANTE_COD)){
-                    yyerror("[ERROR] Non se pode redeclarar unha constante");
-                } else {
-                    if(insertarVariable((yyvsp[-2].cadea),(yyvsp[0].valor)) == FUNCION_COD){
-                       (yyval.valor) = NAN;
-                       yyerror("[ERROR] Non se pode redeclarar unha función");
-                    } else {
-                        (yyval.valor) = (yyvsp[0].valor);
-                    }
-                }
-                free((yyvsp[-2].cadea));
-             }
-#line 1395 "y.tab.c"
-    break;
-
-  case 20: /* declaracion: IDENTIFICADOR OP_MAS_MAS_COD  */
+  case 22: /* exp: LOAD ARQUIVO  */
 #line 138 "analizadorSintactico.y"
-                                            {
-                 if (buscarNumero((yyvsp[-1].cadea),CONSTANTE_COD)){
-                     (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) + 1;
-                 }else if (buscarNumero((yyvsp[-1].cadea),VARIABLE_COD)){
-                     if(is_inicializada((yyvsp[-1].cadea)) == 1){
-                           (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) + 1;
-                           insertarVariable((yyvsp[-1].cadea),(yyval.valor));
-                     } else {
-                        (yyval.valor) = NAN;
-                         yyerror("[ERROR] Non se pode incrementar unha variable non inicializada");
-                     }
-
-                 }else {
-                     (yyval.valor) = NAN;
-                     yyerror("[ERROR] Non se atopa o identificador");
-                 }
-
-                 free((yyvsp[-1].cadea));
-             }
-#line 1419 "y.tab.c"
+                        {
+                            if(!global){
+                                funcionCarga((yyvsp[-1].cadea),(yyvsp[0].cadea));
+                            } else {
+                                yyerror("[ERROR] Xa se está tratando un script...");
+                                free((yyvsp[-1].cadea));
+                            }
+                            free((yyvsp[0].cadea));(yyval.valor) = NAN;
+                        }
+#line 1439 "y.tab.c"
     break;
 
-  case 21: /* declaracion: IDENTIFICADOR OP_MENOS_MENOS_COD  */
-#line 157 "analizadorSintactico.y"
-                                                {
-                 if (buscarNumero((yyvsp[-1].cadea),CONSTANTE_COD)){
-                     (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) - 1;
-                 }else if (buscarNumero((yyvsp[-1].cadea),VARIABLE_COD)){
-                     if (is_inicializada((yyvsp[-1].cadea)) == 1){
-                         (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) - 1;
-                         insertarVariable((yyvsp[-1].cadea),(yyval.valor));
-                     } else {
-                         (yyval.valor) = NAN;
-                         yyerror("[ERROR] Non se pode decrementar unha variable non inicializada");
-                     }
-                 }else {
-                     (yyval.valor) = NAN;
-                     yyerror("[ERROR] Non se atopa o identificador");
-                 }
-
-                 free((yyvsp[-1].cadea));
-             }
-#line 1442 "y.tab.c"
+  case 23: /* declaracion: IDENTIFICADOR OP_ASIGNACION_COD exp  */
+#line 149 "analizadorSintactico.y"
+                                                 {
+                                                    if ( buscarNumero((yyvsp[-2].cadea), CONSTANTE_COD)) {
+                                                         yyerror("[ERROR] Non se pode redefinir unha constante...");
+                                                         (yyval.valor) = NAN;
+                                                    } else {
+                                                         insertarVariable((yyvsp[-2].cadea), (yyvsp[0].valor));
+                                                         (yyval.valor) = (yyvsp[0].valor);
+                                                    }
+                                                    free((yyvsp[-2].cadea));
+                                                 }
+#line 1454 "y.tab.c"
     break;
 
-  case 22: /* declaracion: IDENTIFICADOR OP_SUMA_IGUAL_COD exp  */
-#line 175 "analizadorSintactico.y"
-                                                   {
-                 if (buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
-                     yyerror("[ERROR] Non se pode asignar a unha constante");
-                 }else if (buscarNumero((yyvsp[-2].cadea),VARIABLE_COD)){
-                     if(is_inicializada((yyvsp[-2].cadea)) == 1){
-                         (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) + (yyvsp[0].valor);
-                         insertarVariable((yyvsp[-2].cadea),(yyval.valor));
-                     } else {
-                        (yyval.valor) = NAN;
-                         yyerror("[ERROR] Non se pode asignar a unha variable non inicializada");
-                     }
-                 }else {
-                     (yyval.valor) = NAN;
-                     yyerror("[ERROR] Non se atopa o identificador");
-                 }
-
-                 free((yyvsp[-2].cadea));
-             }
-#line 1465 "y.tab.c"
-    break;
-
-  case 23: /* declaracion: IDENTIFICADOR OP_RESTA_IGUAL_COD exp  */
-#line 193 "analizadorSintactico.y"
-                                                    {
-                 if (buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
-                     yyerror("[ERROR] Non se pode asignar a unha constante");
-                 }else if (buscarNumero((yyvsp[-2].cadea),VARIABLE_COD)){
-                     if (is_inicializada((yyvsp[-2].cadea)) == 1){
-                         (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) - (yyvsp[0].valor);
-                         insertarVariable((yyvsp[-2].cadea),(yyval.valor));
-                     } else {
-                        (yyval.valor) = NAN;
-                         yyerror("[ERROR] Non se pode asignar a unha variable non inicializada");
-                     }
-                 }else {
-                       (yyval.valor) = NAN;
-                     yyerror("[ERROR] Non se atopa o identificador");
-                 }
-
-                 free((yyvsp[-2].cadea));
-             }
-#line 1488 "y.tab.c"
-    break;
-
-  case 24: /* declaracion: IDENTIFICADOR OP_MULT_IGUAL_COD exp  */
-#line 211 "analizadorSintactico.y"
-                                                   {
-                 if (buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
-                     yyerror("[ERROR] Non se pode asignar a unha constante");
-                 }else if (buscarNumero((yyvsp[-2].cadea),VARIABLE_COD)){
-                     if (is_inicializada((yyvsp[-2].cadea)) == 1){
-                         (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) * (yyvsp[0].valor);
-                         insertarVariable((yyvsp[-2].cadea),(yyval.valor));
-                     } else {
-                        (yyval.valor) = NAN;
-                         yyerror("[ERROR] Non se pode asignar a unha variable non inicializada");
-                     }
-                 }else {
-                    (yyval.valor) = NAN;
-                     yyerror("[ERROR] Non se atopa o identificador");
-                 }
-
-                 free((yyvsp[-2].cadea));
-             }
-#line 1511 "y.tab.c"
-    break;
-
-  case 25: /* declaracion: IDENTIFICADOR OP_DIV_IGUAL_COD exp  */
-#line 229 "analizadorSintactico.y"
-                                                  {
-                 if (buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
-                     yyerror("[ERROR] Non se pode asignar a unha constante");
-                 }else if (buscarNumero((yyvsp[-2].cadea),VARIABLE_COD)){
-                     if (is_inicializada((yyvsp[-2].cadea)) == 1 && (yyvsp[0].valor) != 0){
-                         (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) / (yyvsp[0].valor);
-                         insertarVariable((yyvsp[-2].cadea),(yyval.valor));
-                     } else {
-                         if((yyvsp[0].valor) == 0){ yyerror("[ERROR] Non se pode dividir entre 0"); (yyval.valor) = NAN;}
-                         else {
-                             (yyval.valor) = NAN;
-                             yyerror("[ERROR] Non se pode asignar a unha variable non inicializada");
-                         }
-                     }
-                 }else {
-                     (yyval.valor) = NAN;
-                     yyerror("[ERROR] Non se atopa o identificador");
-                 }
-
-                 free((yyvsp[-2].cadea));
-             }
-#line 1537 "y.tab.c"
-    break;
-
-  case 26: /* comparacion: exp '>' exp  */
-#line 252 "analizadorSintactico.y"
-                         {
-                  if(!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))){
-                      if( (yyvsp[-2].valor) > (yyvsp[0].valor) ) printf("Verdadeiro\n");
-                      else printf("Falso\n");
-                  } else {
-                    yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                  }
-
-                  (yyval.valor) = NAN;
-               }
-#line 1552 "y.tab.c"
-    break;
-
-  case 27: /* comparacion: exp '<' exp  */
-#line 262 "analizadorSintactico.y"
-                             {
-                   if(!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))){
-                       if( (yyvsp[-2].valor) < (yyvsp[0].valor) ) printf("Verdadeiro\n");
-                       else printf("Falso\n");
-                   } else {
-                     yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                   }
-                  (yyval.valor) = NAN;
-               }
-#line 1566 "y.tab.c"
-    break;
-
-  case 28: /* comparacion: exp OP_IGUAL_IGUAL_COD exp  */
-#line 271 "analizadorSintactico.y"
-                                            {
-                  if(!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))){
-                      if(fabs((yyvsp[-2].valor) - (yyvsp[0].valor)) < 0.01) printf("Verdadeiro\n");
-                      else printf("Falso\n");
-                  } else {
-                    yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                  }
-                   (yyval.valor) = NAN;
-               }
-#line 1580 "y.tab.c"
-    break;
-
-  case 29: /* comparacion: exp OP_DISTINTO_COD exp  */
-#line 280 "analizadorSintactico.y"
-                                          {
-                   if(!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))){
-                       if((yyvsp[-2].valor) != (yyvsp[0].valor)) printf("Verdadeiro\n");
-                       else printf("Falso\n");
-                   } else {
-                     yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                   }
-                  (yyval.valor) = NAN;
-               }
-#line 1594 "y.tab.c"
-    break;
-
-  case 30: /* comparacion: exp OP_MENOR_IGUAL_COD exp  */
-#line 289 "analizadorSintactico.y"
-                                            {
-                   if(!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))){
-                       if((yyvsp[-2].valor) <= (yyvsp[0].valor)) printf("Verdadeiro\n");
-                       else printf("Falso\n");
-                   } else {
-                     yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                   }
-
-                  (yyval.valor) = NAN;
-               }
-#line 1609 "y.tab.c"
-    break;
-
-  case 31: /* comparacion: exp OP_MAIOR_IGUAL_COD exp  */
-#line 299 "analizadorSintactico.y"
+  case 24: /* declaracion: IDENTIFICADOR OP_MAS_MAS_COD  */
+#line 159 "analizadorSintactico.y"
                                              {
-                   if(!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))){
-                       if((yyvsp[-2].valor) >= (yyvsp[0].valor)) printf("Verdadeiro\n");
-                       else printf("Falso\n");
-                   } else {
-                     yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                   }
-                  (yyval.valor) = NAN;
-               }
+                                                    if(buscarNumero((yyvsp[-1].cadea),CONSTANTE_COD)){
+                                                        (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) + 1;
+                                                    } else if (buscarNumero((yyvsp[-1].cadea), VARIABLE_COD)){
+                                                      if(is_inicializada((yyvsp[-1].cadea))){
+                                                            if(isnan(recuperarValor((yyvsp[-1].cadea)))){
+                                                                yyerror("[WARNING] A variable non se atopa inicializada...");
+                                                                (yyval.valor) = NAN;
+                                                            } else {
+                                                                (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) + 1;
+                                                                insertarVariable((yyvsp[-1].cadea), (yyval.valor));
+                                                            }
+                                                      }
+                                                    } else {
+                                                        (yyval.valor) = NAN;
+                                                        yyerror("[ERROR] Non se pode incrementar unha variable non inicializada...");
+                                                    }
+                                                    free((yyvsp[-1].cadea));
+                                             }
+#line 1478 "y.tab.c"
+    break;
+
+  case 25: /* declaracion: IDENTIFICADOR OP_MENOS_MENOS_COD  */
+#line 178 "analizadorSintactico.y"
+                                                 {
+                                                    if(buscarNumero((yyvsp[-1].cadea),CONSTANTE_COD)){
+                                                        (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) - 1;
+                                                    } else if (buscarNumero((yyvsp[-1].cadea), VARIABLE_COD)){
+                                                       if(is_inicializada((yyvsp[-1].cadea))){
+                                                            if(isnan(recuperarValor((yyvsp[-1].cadea)))){
+                                                                yyerror("[WARNING] A variable non se atopa inicializada...");
+                                                                (yyval.valor) = NAN;
+                                                            } else {
+                                                                (yyval.valor) = recuperarValor((yyvsp[-1].cadea)) - 1;
+                                                                insertarVariable((yyvsp[-1].cadea), (yyval.valor));
+                                                            }
+                                                        }
+                                                    } else {
+                                                        (yyval.valor) = NAN;
+                                                        yyerror("[ERROR] Non se pode decrementar unha variable non inicializada...");
+                                                    }
+                                                    free((yyvsp[-1].cadea));
+                                             }
+#line 1502 "y.tab.c"
+    break;
+
+  case 26: /* declaracion: IDENTIFICADOR OP_SUMA_IGUAL_COD exp  */
+#line 197 "analizadorSintactico.y"
+                                                    {
+                                                       if(buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
+                                                           yyerror("[ERROR] Non se pode redefinir unha constante...");
+                                                           (yyval.valor) = NAN;
+                                                       } else if (buscarNumero((yyvsp[-2].cadea), VARIABLE_COD)) {
+                                                            if (is_inicializada((yyvsp[-2].cadea))) {
+                                                                if (isnan(recuperarValor((yyvsp[-2].cadea)))) {
+                                                                    yyerror("[WARNING] A variable non se atopa inicializada...");
+                                                                    (yyval.valor) = NAN;
+                                                                } else {
+                                                                    (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) + (yyvsp[0].valor);
+                                                                    insertarVariable((yyvsp[-2].cadea), (yyval.valor));
+                                                                }
+
+                                                            }
+                                                       } else {
+                                                            (yyval.valor) = NAN;
+                                                            yyerror("[ERROR] Non se pode incrementar unha variable non inicializada...");
+                                                       }
+                                                       free((yyvsp[-2].cadea));
+                                                    }
+#line 1528 "y.tab.c"
+    break;
+
+  case 27: /* declaracion: IDENTIFICADOR OP_RESTA_IGUAL_COD exp  */
+#line 218 "analizadorSintactico.y"
+                                                     {
+                                                       if(buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
+                                                           yyerror("[ERROR] Non se pode redefinir unha constante...");
+                                                           (yyval.valor) = NAN;
+                                                       } else if (buscarNumero((yyvsp[-2].cadea), VARIABLE_COD)) {
+                                                            if (is_inicializada((yyvsp[-2].cadea))) {
+                                                                if(isnan(recuperarValor((yyvsp[-2].cadea)))) {
+                                                                    yyerror("[WARNING] A variable non se atopa inicializada...");
+                                                                    (yyval.valor) = NAN;
+                                                                } else {
+                                                                    (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) - (yyvsp[0].valor);
+                                                                    insertarVariable((yyvsp[-2].cadea), (yyval.valor));
+                                                                }
+                                                            }
+                                                       } else {
+                                                            (yyval.valor) = NAN;
+                                                            yyerror("[ERROR] Non se pode decrementar unha variable non inicializada...");
+                                                       }
+                                                       free((yyvsp[-2].cadea));
+                                                    }
+#line 1553 "y.tab.c"
+    break;
+
+  case 28: /* declaracion: IDENTIFICADOR OP_MULT_IGUAL_COD exp  */
+#line 238 "analizadorSintactico.y"
+                                                    {
+                                                       if(buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
+                                                           yyerror("[ERROR] Non se pode redefinir unha constante...");
+                                                           (yyval.valor) = NAN;
+                                                       } else if (buscarNumero((yyvsp[-2].cadea), VARIABLE_COD)) {
+                                                            if (is_inicializada((yyvsp[-2].cadea))) {
+                                                                if(isnan(recuperarValor((yyvsp[-2].cadea)))) {
+                                                                    yyerror("[WARNING] A variable non se atopa inicializada...");
+                                                                    (yyval.valor) = NAN;
+                                                                } else {
+                                                                    (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) * (yyvsp[0].valor);
+                                                                    insertarVariable((yyvsp[-2].cadea), (yyval.valor));
+                                                                }
+                                                            }
+                                                       } else {
+                                                            (yyval.valor) = NAN;
+                                                            yyerror("[ERROR] Non se pode multiplicar unha variable non inicializada...");
+                                                       }
+                                                       free((yyvsp[-2].cadea));
+                                                    }
+#line 1578 "y.tab.c"
+    break;
+
+  case 29: /* declaracion: IDENTIFICADOR OP_DIV_IGUAL_COD exp  */
+#line 258 "analizadorSintactico.y"
+                                                   {
+                                                       if(buscarNumero((yyvsp[-2].cadea),CONSTANTE_COD)){
+                                                           yyerror("[ERROR] Non se pode redefinir unha constante...");
+                                                           (yyval.valor) = NAN;
+                                                       } else if (buscarNumero((yyvsp[-2].cadea), VARIABLE_COD)) {
+                                                            if (is_inicializada((yyvsp[-2].cadea)) && (yyvsp[0].valor) != 0) {
+                                                                if(isnan(recuperarValor((yyvsp[-2].cadea)))) {
+                                                                    yyerror("[WARNING] A variable non se atopa inicializada...");
+                                                                    (yyval.valor) = NAN;
+                                                                } else {
+                                                                    (yyval.valor) = recuperarValor((yyvsp[-2].cadea)) / (yyvsp[0].valor);
+                                                                    insertarVariable((yyvsp[-2].cadea), (yyval.valor));
+                                                                }
+                                                            } else {
+                                                                 yyerror("[ERROR] División por 0...");
+                                                                (yyval.valor) = NAN;
+                                                            }
+                                                       } else {
+                                                            (yyval.valor) = NAN;
+                                                            yyerror("[ERROR] Non se pode dividir unha variable non inicializada...");
+                                                       }
+                                                       free((yyvsp[-2].cadea));
+                                                    }
+#line 1606 "y.tab.c"
+    break;
+
+  case 30: /* comparacion: exp '>' exp  */
+#line 283 "analizadorSintactico.y"
+                         {
+                            if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                             if ((yyvsp[-2].valor) > (yyvsp[0].valor)) {
+                                  printf("Verdadeiro\n");
+                                 } else {
+                                  printf("Falso\n");
+                                 }
+                            } else {
+                             yyerror("[ERROR] Variable/s non inicializada/s...");
+                            }
+                              (yyval.valor) = NAN;
+                         }
 #line 1623 "y.tab.c"
     break;
 
-  case 32: /* calculo: exp '+' exp  */
-#line 310 "analizadorSintactico.y"
+  case 31: /* comparacion: exp '<' exp  */
+#line 295 "analizadorSintactico.y"
+                            {
+                                if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                 if ((yyvsp[-2].valor) < (yyvsp[0].valor)) {
+                                      printf("Verdadeiro\n");
+                                     } else {
+                                      printf("Falso\n");
+                                     }
+                                } else {
+                                 yyerror("[ERROR] Variable/s non inicializada/s...");
+                                }
+                                  (yyval.valor) = NAN;
+                            }
+#line 1640 "y.tab.c"
+    break;
+
+  case 32: /* comparacion: exp OP_IGUAL_IGUAL_COD exp  */
+#line 307 "analizadorSintactico.y"
+                                           {
+                                                if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                                    if (fabs((yyvsp[-2].valor) - (yyvsp[0].valor)) < 0.01) {
+                                                        printf("Verdadeiro\n");
+                                                     } else {
+                                                        printf("Falso\n");
+                                                     }
+                                                } else {
+                                                    yyerror("[ERROR] Variable/s non inicializada/s...");
+                                                }
+                                                (yyval.valor) = NAN;
+                                            }
+#line 1657 "y.tab.c"
+    break;
+
+  case 33: /* comparacion: exp OP_DISTINTO_COD exp  */
+#line 319 "analizadorSintactico.y"
+                                        {
+                                            if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                                    if ((yyvsp[-2].valor) != (yyvsp[0].valor)) {
+                                                        printf("Verdadeiro\n");
+                                                    } else {
+                                                        printf("Falso\n");
+                                                    }
+                                                } else {
+                                                    yyerror("[ERROR] Variable/s non inicializada/s...");
+                                                }
+                                                (yyval.valor) = NAN;
+                                          }
+#line 1674 "y.tab.c"
+    break;
+
+  case 34: /* comparacion: exp OP_MENOR_IGUAL_COD exp  */
+#line 331 "analizadorSintactico.y"
+                                           {
+                                                if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                                    if ((yyvsp[-2].valor) <= (yyvsp[0].valor)) {
+                                                        printf("Verdadeiro\n");
+                                                    } else {
+                                                        printf("Falso\n");
+                                                    }
+                                                } else {
+                                                    yyerror("[ERROR] Variable/s non inicializada/s...");
+                                                }
+                                                (yyval.valor) = NAN;
+                                            }
+#line 1691 "y.tab.c"
+    break;
+
+  case 35: /* comparacion: exp OP_MAIOR_IGUAL_COD exp  */
+#line 343 "analizadorSintactico.y"
+                                           {
+                                                if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                                    if ((yyvsp[-2].valor) >= (yyvsp[0].valor)) {
+                                                        printf("Verdadeiro\n");
+                                                    } else {
+                                                        printf("Falso\n");
+                                                    }
+                                                } else {
+                                                    yyerror("[ERROR] Variable/s non inicializada/s...");
+                                                }
+                                                (yyval.valor) = NAN;
+                                            }
+#line 1708 "y.tab.c"
+    break;
+
+  case 36: /* calculo: exp '+' exp  */
+#line 358 "analizadorSintactico.y"
                      {
-             if(isnan((yyvsp[-2].valor)) || isnan((yyvsp[0].valor))){
-                 yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                 (yyval.valor) = NAN;
-             } else {
-                 (yyval.valor) = (yyvsp[-2].valor) + (yyvsp[0].valor);
-             }
-         }
-#line 1636 "y.tab.c"
+                        if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                            (yyval.valor) = (yyvsp[-2].valor) + (yyvsp[0].valor);
+                        } else {
+                            yyerror("[ERROR] Variable/s non inicializada/s...");
+                            (yyval.valor) = NAN;
+                        }
+                     }
+#line 1721 "y.tab.c"
     break;
 
-  case 33: /* calculo: exp '-' exp  */
-#line 318 "analizadorSintactico.y"
-                       {
-            if(isnan((yyvsp[-2].valor)) || isnan((yyvsp[0].valor))){
-                yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                (yyval.valor) = NAN;
-            } else {
-                (yyval.valor) = (yyvsp[-2].valor) - (yyvsp[0].valor);
-            }
-         }
-#line 1649 "y.tab.c"
-    break;
-
-  case 34: /* calculo: exp '*' exp  */
-#line 326 "analizadorSintactico.y"
-                       {
-             if(isnan((yyvsp[-2].valor)) || isnan((yyvsp[0].valor))){
-                 yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                 (yyval.valor) = NAN;
-             } else {
-                 (yyval.valor) = (yyvsp[-2].valor) * (yyvsp[0].valor);
-             }
-         }
-#line 1662 "y.tab.c"
-    break;
-
-  case 35: /* calculo: exp '/' exp  */
-#line 334 "analizadorSintactico.y"
-                       {
-             if(isnan((yyvsp[-2].valor)) || isnan((yyvsp[0].valor))){
-                 yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                 (yyval.valor) = NAN;
-             } else {
-                 if((yyvsp[0].valor) == 0){ yyerror("[ERROR] Non se pode dividir entre 0"); (yyval.valor) = NAN;}
-                 else {
-                     (yyval.valor) = (yyvsp[-2].valor) / (yyvsp[0].valor);
-                 }
-             }
-
-         }
-#line 1679 "y.tab.c"
-    break;
-
-  case 36: /* calculo: '-' exp  */
-#line 346 "analizadorSintactico.y"
-                                  {
-             if(isnan((yyvsp[0].valor))){
-                 yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                 (yyval.valor) = NAN;
-             } else {
-                 (yyval.valor) = -(yyvsp[0].valor);
-             }
-         }
-#line 1692 "y.tab.c"
-    break;
-
-  case 37: /* metodo: IDENTIFICADOR '(' exp ')'  */
-#line 357 "analizadorSintactico.y"
-                                  {
-            if(buscarNumero((yyvsp[-3].cadea),FUNCION_COD)){
-                if(!isnan((yyvsp[-1].valor))){
-                    (yyval.valor) = executarFuncion((yyvsp[-3].cadea),(yyvsp[-1].valor));
-                } else {
-                    (yyval.valor) = NAN;
-                    yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                }
-            }else{
-                (yyval.valor) = NAN;
-                yyerror("[ERROR] Non se atopa a función");
-              }
-              free((yyvsp[-3].cadea));
-        }
-#line 1711 "y.tab.c"
-    break;
-
-  case 38: /* metodo: IDENTIFICADOR '(' exp ',' exp ')'  */
-#line 371 "analizadorSintactico.y"
-                                            {
-            if(buscarNumero((yyvsp[-5].cadea),FUNCION_COD)){
-                if(!isnan((yyvsp[-3].valor)) && !isnan((yyvsp[-1].valor))){
-                    (yyval.valor) = executarFuncionMultiple((yyvsp[-5].cadea),(yyvsp[-3].valor),(yyvsp[-1].valor));
-                } else {
-                    (yyval.valor) = NAN;
-                    yyerror("[ERROR] Estase utilizando unha variable sen inicializar");
-                }
-            }else{
-                (yyval.valor) = NAN;
-                yyerror("[ERROR] Non se atopa a función");
-              }
-              free((yyvsp[-5].cadea));
-        }
-#line 1730 "y.tab.c"
-    break;
-
-
+  case 37: /* calculo: exp '-' exp  */
+#line 366 "analizadorSintactico.y"
+                     {
+                            if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                (yyval.valor) = (yyvsp[-2].valor) - (yyvsp[0].valor);
+                            } else {
+                                yyerror("[ERROR] Variable/s non inicializada/s...");
+                                (yyval.valor) = NAN;
+                            }
+                         }
 #line 1734 "y.tab.c"
+    break;
+
+  case 38: /* calculo: exp '*' exp  */
+#line 374 "analizadorSintactico.y"
+                     {
+                            if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                (yyval.valor) = (yyvsp[-2].valor) * (yyvsp[0].valor);
+                            } else {
+                                yyerror("[ERROR] Variable/s non inicializada/s...");
+                                (yyval.valor) = NAN;
+                            }
+                     }
+#line 1747 "y.tab.c"
+    break;
+
+  case 39: /* calculo: exp '/' exp  */
+#line 382 "analizadorSintactico.y"
+                     {
+                            if ((!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) || ((yyvsp[0].valor) != 0)) {
+                                (yyval.valor) = (yyvsp[-2].valor) / (yyvsp[0].valor);
+                            } else {
+                                if ((yyvsp[0].valor) != 0) yyerror("[ERROR] Variable/s non inicializada/s...");
+                                else yyerror("[ERROR] División por 0...");
+                                (yyval.valor) = NAN;
+                            }
+                       }
+#line 1761 "y.tab.c"
+    break;
+
+  case 40: /* calculo: exp '%' exp  */
+#line 391 "analizadorSintactico.y"
+                     {
+                            if ((!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) || ((yyvsp[0].valor) != 0)) {
+                                (yyval.valor) = fmod((yyvsp[-2].valor),(yyvsp[0].valor));
+                            } else {
+                                if ((yyvsp[0].valor) != 0) yyerror("[ERROR] Variable/s non inicializada/s...");
+                                else yyerror("[ERROR] División por 0...");
+                                (yyval.valor) = NAN;
+                            }
+                       }
+#line 1775 "y.tab.c"
+    break;
+
+  case 41: /* calculo: exp '^' exp  */
+#line 400 "analizadorSintactico.y"
+                     {
+                            if (!isnan((yyvsp[-2].valor)) && !isnan((yyvsp[0].valor))) {
+                                (yyval.valor) = pow((yyvsp[-2].valor), (yyvsp[0].valor));
+                            } else {
+                                yyerror("[ERROR] Variable/s non inicializada/s...");
+                                (yyval.valor) = NAN;
+                            }
+                       }
+#line 1788 "y.tab.c"
+    break;
+
+  case 42: /* calculo: '-' exp  */
+#line 408 "analizadorSintactico.y"
+                                {
+                                    if (!isnan((yyvsp[0].valor))) {
+                                        (yyval.valor) = -(yyvsp[0].valor);
+                                    } else {
+                                        yyerror("[ERROR] Variable/s non inicializada/s...");
+                                        (yyval.valor) = NAN;
+                                    }
+                                }
+#line 1801 "y.tab.c"
+    break;
+
+  case 43: /* externas: LIBRERIA '/' IDENTIFICADOR '(' exp ')'  */
+#line 419 "analizadorSintactico.y"
+                                                {
+                                                    char *busqueda = (char *)malloc(sizeof(char)*(strlen((yyvsp[-5].cadea))+strlen((yyvsp[-3].cadea))+2));
+                                                    strncpy(busqueda,(yyvsp[-5].cadea), strlen((yyvsp[-5].cadea)));
+                                                    strncpy(busqueda+strlen((yyvsp[-5].cadea)),"/", 2);
+                                                    strncpy(busqueda+strlen((yyvsp[-5].cadea))+1,(yyvsp[-3].cadea), strlen((yyvsp[-3].cadea)));
+                                                    busqueda[strlen((yyvsp[-5].cadea))+strlen((yyvsp[-3].cadea))+1] = '\0';
+
+                                                    if(buscarNumero(busqueda,FUNCION_COD)){
+                                                        if(!isnan((yyvsp[-1].valor))){
+                                                            (yyval.valor) = executarFuncion(busqueda,(yyvsp[-1].valor));
+                                                        } else {
+                                                           yyerror("[ERROR] O parámetro utilizado non é válido...");
+                                                           (yyval.valor) = NAN;
+                                                        }
+                                                    } else {
+                                                        /*Comprobamos se a función existe e executamola e insertámola. En caso contraria significaría que a función non existe*/
+                                                        if(buscarLibreria((yyvsp[-5].cadea))){
+                                                            (yyval.valor) = executarExterna(busqueda,(yyvsp[-5].cadea), (yyvsp[-3].cadea), (yyvsp[-1].valor));
+                                                        } else {
+                                                            (yyval.valor) = NAN;
+                                                            yyerror("[ERROR] A función non está incluída...");
+                                                        }
+                                                    }
+                                                    free((yyvsp[-5].cadea));free((yyvsp[-3].cadea)); free(busqueda);
+                                                }
+#line 1831 "y.tab.c"
+    break;
+
+  case 44: /* externas: LIBRERIA '/' IDENTIFICADOR '(' exp ',' exp ')'  */
+#line 444 "analizadorSintactico.y"
+                                                          {
+                                                             char *busqueda = (char *)malloc(sizeof(char)*(strlen((yyvsp[-7].cadea))+strlen((yyvsp[-5].cadea))+2));
+                                                             strncpy(busqueda,(yyvsp[-7].cadea), strlen((yyvsp[-7].cadea)));
+                                                             strncpy(busqueda+strlen((yyvsp[-7].cadea)),"/", 2);
+                                                             strncpy(busqueda+strlen((yyvsp[-7].cadea))+1,(yyvsp[-5].cadea), strlen((yyvsp[-5].cadea)));
+                                                             busqueda[strlen((yyvsp[-7].cadea))+strlen((yyvsp[-5].cadea))+1] = '\0';
+
+                                                             if(buscarNumero(busqueda, FUNCION_COD)){
+                                                                 if (!isnan((yyvsp[-3].valor)) && !isnan((yyvsp[-1].valor))){
+                                                                      (yyval.valor) = executarFuncionMultiple(busqueda,(yyvsp[-3].valor),(yyvsp[-1].valor));
+                                                                 } else {
+                                                                      yyerror("[ERROR] Parámetro/s inválido/s...");
+                                                                      (yyval.valor) = NAN;
+                                                                 }
+                                                             } else {
+                                                                 /*Comprobamos se a función existe e executamola e insertámola. En caso contrario significaría que a función non existe*/
+                                                                 if(buscarLibreria((yyvsp[-7].cadea))){
+                                                                    (yyval.valor) = executarExternaMultiple(busqueda,(yyvsp[-7].cadea), (yyvsp[-5].cadea), (yyvsp[-3].valor), (yyvsp[-1].valor));
+                                                                 } else {
+                                                                    (yyval.valor) = NAN;
+                                                                    yyerror("[ERROR] A librería non está incluída...");
+                                                                 }
+                                                             }
+                                                             free((yyvsp[-7].cadea));free((yyvsp[-5].cadea)); free(busqueda);
+                                                          }
+#line 1861 "y.tab.c"
+    break;
+
+
+#line 1865 "y.tab.c"
 
       default: break;
     }
@@ -1924,14 +2055,15 @@ yyreturn:
   return yyresult;
 }
 
-#line 386 "analizadorSintactico.y"
+#line 470 "analizadorSintactico.y"
 
+
+void cambiarGlobal(){
+    global = global == 0 ? 1 : 0;
+}
 
 
 void yyerror(char *s){
     printf("%s\n", s);
 }
 
-void cambiarGlobal(){
-    global = global == 0 ? 1 : 0;
-}

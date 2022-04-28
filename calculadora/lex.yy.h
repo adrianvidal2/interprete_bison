@@ -215,6 +215,7 @@ extern char *yytext;
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
 #define CARGAR 1
+#define EXTERNO 2
 
 #endif
 
@@ -258,8 +259,8 @@ char *yyget_text ( void );
 int yyget_lineno ( void );
 
 void yyset_lineno ( int _line_number  );
-
-void apertura_arquivo(char *filename);
+double apertura_arquivo(char *filename);
+double sair();
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
  */
@@ -469,9 +470,9 @@ extern int yylex (void);
 #undef yyTABLES_NAME
 #endif
 
-#line 127 "analizadorLexico.l"
+#line 153 "analizadorLexico.l"
 
 
-#line 475 "lex.yy.h"
+#line 476 "lex.yy.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

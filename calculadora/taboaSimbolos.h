@@ -4,23 +4,30 @@
 /*FUNCIÓN MODIFICACIÓN*/
 void inicializarTaboa();
 void destruirTaboa();
-void eliminarWorkspace();
+double eliminarWorkspace();
 
 /*FUNCIÓNS DE IMPRESIÓN*/
-void imprimirTaboa();
-void imprimirWorkspace();
+double imprimirTaboa();
+double imprimirWorkspace();
 
 /*FUNCIÓNS DE INSERCIÓN*/
-int insertarVariable(char *lexema, double valor);
-int crearVariable(char *lexema);
+void insertarFuncion(char *nome, int code, void *func);
+void insertarVariable(char *lexema, double valor);
 
 /*FUNCIÓNS DE BÚSQUEDA E RECUPERACIÓN*/
 int buscarNumero(char *lexema, int codigo);
+int buscarKeyword(char *lexema);
+int buscarLibreria(char *lexema);
 int is_inicializada(char *lexema);
+
 double recuperarValor(char *lexema);
 
 /*FUNCIÓNS DE EXECUCIÓN DE FUNCIÓNS EXTERNAS*/
 double executarFuncion(char *lexema, double valor);
 double executarFuncionMultiple(char *lexema, double valor, double valor2);
+double executar(char *nomeFuncion);
+double funcionCarga(char *funcion,char *nomeArquivo);
 
+double executarExterna(char *conxunto,char *libreria,char *nomeFuncion, double valor);
+double executarExternaMultiple(char *conxunto, char *libreria, char *nomeFuncion, double valor1, double valor2);
 #endif /* TABOASIMBOLOS_TABOASIMBOLOS_H_ */
