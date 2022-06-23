@@ -1,0 +1,16 @@
+#ifndef DEFINICIONS_H_
+#define FUNCION_COD 300
+#define VARIABLE_COD 301
+#define CONSTANTE_COD 302
+
+
+#define TABOA_COD 303
+#define WORKSPACE_COD 304
+#define ELIMINAR_WORKSPACE_COD 305
+#define AXUDA_COD 306
+#define SAIR_COD 307
+#define IMPORT_COD 308
+#define LOAD_COD 309
+#define CREACION_COD 310
+#define LIB_COD 311
+#endif /* DEFINICIONS_H_ */
