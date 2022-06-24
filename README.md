@@ -52,6 +52,15 @@ Se puede ejecutar el siguiente comando para la eliminación de todos los archivo
 make cleanall
 ```
 
+## Funciones incorporadas
+- axuda -> Muestra la ayuda del programa.
+- taboa -> Muestra la tabla de símbolos global (variables, constantes y funciones).
+- workspace -> Impresión de las variables y sus valores utilizados hasta el momento.
+- eliminar -> Eliminación del workspace.
+- import(lib) -> Importación de librerias.
+- load(file) -> Ejecución de las operaciones que contiene el archivo.
+- sair -> Salida del programa.
+
 ## Uso de librerías
 Se ha implementado la importación de librerías de forma dinámica, permitiendo así el uso de múltiples de estas al mismo tiempo. Teniendo en cuenta que una función puede tener el mismo nombre en diferentes librerías, se ha optado por una elección de representación de la ruta de cada nombre. Por ejemplo, el uso de la función sin de la librería matemática se realizaría:
 
