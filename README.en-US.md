@@ -54,6 +54,15 @@ You can run the following command to remove all object files and the executable
 ```
 make cleanall
 ```
+## Incorporated operations
+- *axuda* -> Shows the help of the program.
+- *taboa* -> Shows the global symbol table (variables, constants, and functions).
+- *workspace* -> Printing of variables and their values used so far.
+- *eliminar* -> Delete workspace.
+- *import(lib)* -> Import library lib.
+- *load(file)* -> Execution of the operations contained in the file.
+- *sair* -> Exit.
+
 
 ## Use of libraries
 The import of libraries has been implemented dynamically, allowing the use of multiples libraries at the same time. Considering that a function may have the same time in different libraries, I have chosen a choice of representation of the path of each name. For example, the use of the function without the mathematical library would be done:
